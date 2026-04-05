@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CentOS Linux — Review Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1117;
+    --bg3: #161b24;
+    --surface: #1a2030;
+    --surface2: #222a3a;
+    --border: #2a3448;
+    --text: #e2e8f0;
+    --muted: #7a8ba0;
+    --accent: #00e5ff;
+    --accent2: #ff6b6b;
+    --accent3: #a78bfa;
+    --accent4: #34d399;
+    --yellow: #fbbf24;
+    --glow: 0 0 20px rgba(0,229,255,0.15);
+    --glow-strong: 0 0 40px rgba(0,229,255,0.25);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, rgba(0,229,255,0.12), rgba(167,139,250,0.12));
+    border: 1px solid rgba(0,229,255,0.25);
+    border-radius: 8px;
+    padding: 6px 12px;
+    margin-bottom: 10px;
+  }
+
+  .logo-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  .logo-text {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .sidebar-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .sidebar-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .sidebar-nav {
+    padding: 16px 0;
+    flex: 1;
+  }
+
+  .nav-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding: 8px 24px 6px;
+    margin-top: 8px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+    border-left-color: var(--border);
+  }
+
+  .nav-item.active {
+    color: var(--accent);
+    background: rgba(0,229,255,0.05);
+    border-left-color: var(--accent);
+  }
+
+  .nav-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: inherit;
+    opacity: 0.6;
+    min-width: 18px;
+  }
+
+  .sidebar-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    margin-left: 260px;
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 80px 60px 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg3) 100%);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 20%;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(167,139,250,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 100px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 24px;
+    animation: fadeInUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--text);
+    max-width: 700px;
+    animation: fadeInUp 0.7s ease 0.1s both;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    margin-top: 18px;
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.7;
+    animation: fadeInUp 0.7s ease 0.2s both;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+    animation: fadeInUp 0.7s ease 0.3s both;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .stat-num span {
+    color: var(--accent);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    padding: 0;
+  }
+
+  /* ── CHAPTER SECTION ── */
+  .chapter {
+    padding: 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .chapter.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .chapter-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.18);
+    border-radius: 6px;
+    padding: 4px 10px;
+    white-space: nowrap;
+    margin-top: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  .chapter-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .chapter-summary {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-top: 6px;
+    max-width: 640px;
+  }
+
+  /* ── 2-COL GRID ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .card-grid.single { grid-template-columns: 1fr; }
+  .card-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .card:hover {
+    border-color: rgba(0,229,255,0.3);
+    transform: translateY(-2px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* color variants */
+  .card.blue .card-label { color: var(--accent); }
+  .card.purple .card-label { color: var(--accent3); }
+  .card.red .card-label { color: var(--accent2); }
+  .card.green .card-label { color: var(--accent4); }
+  .card.yellow .card-label { color: var(--yellow); }
+
+  /* ── CODE BLOCK ── */
+  .code-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .code-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cmd {
+    font-family: 'Space Mono', monospace;
+    font-size: 12.5px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--accent4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+  }
+
+  .cmd:hover {
+    background: rgba(52,211,153,0.05);
+    border-color: rgba(52,211,153,0.3);
+  }
+
+  .cmd::before {
+    content: '$';
+    color: var(--muted);
+    opacity: 0.6;
+    font-size: 11px;
+  }
+
+  .cmd.root::before { content: '#'; color: var(--accent2); }
+
+  .cmd-note {
+    font-size: 11px;
+    color: var(--muted);
+    padding-left: 12px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  /* ── TERM LIST ── */
+  .term-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .term-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .term-key {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.2);
+    color: var(--accent3);
+    border-radius: 4px;
+    padding: 3px 8px;
+    white-space: nowrap;
+    min-width: fit-content;
+    margin-top: 1px;
+  }
+
+  .term-val {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── BULLET LIST ── */
+  .bullet-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .bullet-list li {
+    font-size: 13.5px;
+    color: var(--text);
+    display: flex;
+    gap: 10px;
+    line-height: 1.6;
+  }
+
+  .bullet-list li::before {
+    content: '▸';
+    color: var(--accent);
+    font-size: 10px;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  /* ── QUICK REVIEW STRIP ── */
+  .quick-review {
+    background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(167,139,250,0.06));
+    border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 16px;
+  }
+
+  .quick-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .quick-title::before {
+    content: '⚡';
+    font-size: 13px;
+  }
+
+  .quick-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .quick-chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 11.5px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 4px 14px;
+    color: var(--text);
+    transition: all 0.15s ease;
+  }
+
+  .quick-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* ── IMAGE PLACEHOLDER ── */
+  .perm-diagram {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 28px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .hero { padding: 50px 24px 40px; }
+    .chapter { padding: 40px 24px; }
+    .card-grid, .card-grid.three { grid-template-columns: 1fr; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; }
+    .mobile-menu-btn { display: flex; }
+  }
+
+  .mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 16px; left: 16px;
+    z-index: 200;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 260px; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.1s linear;
+    z-index: 50;
+  }
+
+  /* ── CHAPTER COLOR ACCENTS ── */
+  .chapter:nth-child(1) .chapter-num { background: rgba(0,229,255,0.08); border-color: rgba(0,229,255,0.2); color: var(--accent); }
+  .chapter:nth-child(2) .chapter-num { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.2); color: var(--accent3); }
+  .chapter:nth-child(3) .chapter-num { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.2); color: var(--accent4); }
+  .chapter:nth-child(4) .chapter-num { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.2); color: var(--yellow); }
+  .chapter:nth-child(5) .chapter-num { background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.2); color: var(--accent2); }
+
+  /* group sub-cards */
+  .sub-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-top: 8px;
+  }
+
+  .sub-card-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* warning highlight */
+  .warn {
+    display: inline;
+    background: rgba(255,107,107,0.12);
+    border: 1px solid rgba(255,107,107,0.25);
+    color: var(--accent2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    margin-left: 6px;
+  }
+
+  .tag {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    color: var(--accent4);
+    border-radius: 4px;
+    padding: 1px 7px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<button class="mobile-menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-badge">
+        <div class="logo-dot"></div>
+        <span class="logo-text">Study Notes</span>
+      </div>
+      <div class="sidebar-title">CentOS Linux</div>
+      <div class="sidebar-sub">// Review Notes</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-label">Chapters</div>
+      <a class="nav-item" href="#ch1">
+        <span class="nav-num">01</span> Introduction to CentOS
+      </a>
+      <a class="nav-item" href="#ch2">
+        <span class="nav-num">02</span> Basic Commands
+      </a>
+      <a class="nav-item" href="#ch3">
+        <span class="nav-num">03</span> Package Management
+      </a>
+      <a class="nav-item" href="#ch4">
+        <span class="nav-num">04</span> Files & Directories
+      </a>
+      <a class="nav-item" href="#ch5">
+        <span class="nav-num">05</span> Users & Permissions
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      5 chapters · ~60 commands<br>
+      <span style="color:var(--accent)">●</span> Ready for review
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-tag">📋 Pre-Class Notes</div>
+      <h1>CentOS Linux<br><span>Review Guide</span></h1>
+      <p class="hero-desc">Concise, organized notes covering core CentOS concepts — from basic navigation to user management and permissions.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">5<span>ch</span></div>
+          <div class="stat-label">Chapters</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">60<span>+</span></div>
+          <div class="stat-label">Commands</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">RHEL<span>↔</span></div>
+          <div class="stat-label">Aligned</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- ─────────────── CHAPTER 1 ─────────────── -->
+      <section class="chapter" id="ch1">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 01</div>
+          <div>
+            <div class="chapter-title">Introduction to CentOS Linux</div>
+            <div class="chapter-summary">Overview of Linux vs UNIX, the file system tree, partitions, and how to keep your system updated.</div>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">Key Concepts</div>
+            <ul class="bullet-list">
+              <li>CentOS is community-supported, RHEL-aligned</li>
+              <li>Linux = Kernel + Tools (utils, GUI, packages)</li>
+              <li>UNIX file system = tree starting at root <code style="font-family:Space Mono;font-size:11px;color:var(--accent)">/</code></li>
+              <li>Full path always begins with <code style="font-family:Space Mono;font-size:11px;color:var(--accent)">/</code></li>
+              <li>CentOS is open source (GPL)</li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">Partitions</div>
+            <ul class="bullet-list">
+              <li><strong style="color:var(--accent3)">/boot</strong> — startup partition</li>
+              <li><strong style="color:var(--accent3)">swap</strong> — virtual memory</li>
+              <li><strong style="color:var(--accent3)">/</strong> — root: stores system & user data</li>
+            </ul>
+            <div style="margin-top:16px">
+              <div class="section-label">Update Command</div>
+              <div class="cmd">dnf update -y</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Key Terms</div>
+        <div class="card">
+          <div class="term-list">
+            <div class="term-item"><span class="term-key">CentOS</span><span class="term-val">Community Enterprise OS — community-supported, RHEL-aligned</span></div>
+            <div class="term-item"><span class="term-key">RHEL</span><span class="term-val">Red Hat Enterprise Linux</span></div>
+            <div class="term-item"><span class="term-key">Kernel</span><span class="term-val">Core that manages hardware and resources</span></div>
+            <div class="term-item"><span class="term-key">Root /</span><span class="term-val">Top of the file system tree</span></div>
+            <div class="term-item"><span class="term-key">Partition</span><span class="term-val">Disk section for a specific purpose (e.g., /boot, swap)</span></div>
+            <div class="term-item"><span class="term-key">File System</span><span class="term-val">Format for storing files (e.g., ext4, xfs)</span></div>
+          </div>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">CentOS ↔ RHEL</span>
+            <span class="quick-chip">Linux = UNIX-based + GPL</span>
+            <span class="quick-chip">Tree starts at /</span>
+            <span class="quick-chip">/boot · swap · /</span>
+            <span class="quick-chip">dnf update -y</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 2 ─────────────── -->
+      <section class="chapter" id="ch2">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 02</div>
+          <div>
+            <div class="chapter-title">Basic Commands</div>
+            <div class="chapter-summary">Shutdown, restart, GUI switching, help, navigation, vi basics, file creation, text tools, variables, and runlevels.</div>
+          </div>
+        </div>
+
+        <div class="card-grid three">
+          <div class="card red">
+            <div class="card-label red">Shutdown / Restart</div>
+            <ul class="code-list">
+              <li><div class="cmd root">reboot</div><div class="cmd-note">restart now</div></li>
+              <li><div class="cmd root">init 6</div><div class="cmd-note">restart (runlevel)</div></li>
+              <li><div class="cmd root">poweroff</div><div class="cmd-note">shutdown now</div></li>
+              <li><div class="cmd root">shutdown -h now</div></li>
+              <li><div class="cmd root">init 0</div><div class="cmd-note">shutdown (runlevel)</div></li>
+              <li><div class="cmd root">shutdown -h +60</div><div class="cmd-note">in 60 min</div></li>
+              <li><div class="cmd root">shutdown -h 23:00</div></li>
+              <li><div class="cmd root">shutdown -c</div><div class="cmd-note">cancel scheduled</div></li>
+            </ul>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">Navigation</div>
+            <ul class="code-list">
+              <li><div class="cmd">pwd</div><div class="cmd-note">print current dir</div></li>
+              <li><div class="cmd">ls</div></li>
+              <li><div class="cmd">ls -a</div><div class="cmd-note">show hidden files</div></li>
+              <li><div class="cmd">ls -l</div><div class="cmd-note">long listing</div></li>
+              <li><div class="cmd">ls -lh</div><div class="cmd-note">human-readable sizes</div></li>
+              <li><div class="cmd">cd ..</div></li>
+              <li><div class="cmd">cd ~</div><div class="cmd-note">home dir</div></li>
+              <li><div class="cmd">cd /</div><div class="cmd-note">root dir</div></li>
+              <li><div class="cmd">cd -</div><div class="cmd-note">previous dir</div></li>
+            </ul>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">VI Editor</div>
+            <ul class="code-list">
+              <li><div class="cmd">vi &lt;file&gt;</div><div class="cmd-note">open file</div></li>
+              <li><div class="cmd" style="color:var(--accent4)">:wq</div><div class="cmd-note">save & quit</div></li>
+              <li><div class="cmd" style="color:var(--accent4)">:wq!</div><div class="cmd-note">force save & quit</div></li>
+              <li><div class="cmd" style="color:var(--accent2)">:q!</div><div class="cmd-note">quit no save</div></li>
+              <li><div class="cmd">:u</div><div class="cmd-note">undo</div></li>
+              <li><div class="cmd">:redo</div></li>
+              <li><div class="cmd">:set number</div><div class="cmd-note">show line numbers</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card purple">
+            <div class="card-label purple">Help Commands</div>
+            <ul class="code-list">
+              <li><div class="cmd">&lt;command&gt; --help</div></li>
+              <li><div class="cmd">man &lt;command&gt;</div><div class="cmd-note">manual page</div></li>
+              <li><div class="cmd">info &lt;command&gt;</div><div class="cmd-note">info page</div></li>
+            </ul>
+          </div>
+
+          <div class="card yellow">
+            <div class="card-label yellow">Text Tools & Echo</div>
+            <ul class="code-list">
+              <li><div class="cmd">head -5 file</div><div class="cmd-note">first 5 lines</div></li>
+              <li><div class="cmd">tail -5 file</div><div class="cmd-note">last 5 lines</div></li>
+              <li><div class="cmd">grep keyword file</div></li>
+              <li><div class="cmd">echo HelloWorld</div></li>
+              <li><div class="cmd">echo $HOSTNAME</div></li>
+              <li><div class="cmd">echo $USER</div></li>
+              <li><div class="cmd">echo $HOME</div></li>
+            </ul>
+            <div class="section-label" style="margin-top:14px">Redirect</div>
+            <ul class="code-list">
+              <li><div class="cmd">&gt; file</div><div class="cmd-note">overwrite</div></li>
+              <li><div class="cmd">&gt;&gt; file</div><div class="cmd-note">append</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-label">Runlevels / Targets</div>
+        <div class="card">
+          <div class="card-label blue">System Targets (systemd)</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 20px;text-align:center;min-width:140px">
+              <div style="font-family:Space Mono;font-size:10px;color:var(--muted);margin-bottom:6px">Runlevel 3</div>
+              <div style="font-family:Space Mono;font-size:12px;color:var(--accent)">multi-user.target</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px">Text mode</div>
+            </div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:14px 20px;text-align:center;min-width:140px">
+              <div style="font-family:Space Mono;font-size:10px;color:var(--muted);margin-bottom:6px">Runlevel 5</div>
+              <div style="font-family:Space Mono;font-size:12px;color:var(--accent3)">graphical.target</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:4px">GUI mode</div>
+            </div>
+          </div>
+          <div class="cmd">systemctl get-default</div>
+          <div class="cmd-note" style="margin-top:4px">Check current default target</div>
+        </div>
+
+        <div class="section-label">Shell Prompt & Shortcuts</div>
+        <div class="card-grid">
+          <div class="card">
+            <div class="card-label blue">Prompt Symbols</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">#</span><span class="term-val">Root user — elevated privileges</span></div>
+              <div class="term-item"><span class="term-key">$</span><span class="term-val">Normal user — standard access</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-label green">GUI / Console Switch</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">Ctrl+Alt+F1/F7</span><span class="term-val">Switch to GUI</span></div>
+              <div class="term-item"><span class="term-key">Ctrl+Alt+F2–F6</span><span class="term-val">Switch to text console</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">shutdown -h now</span>
+            <span class="quick-chip">reboot</span>
+            <span class="quick-chip">--help · man · info</span>
+            <span class="quick-chip">ls -lh</span>
+            <span class="quick-chip">cd ~ / cd ..</span>
+            <span class="quick-chip">vi :wq / :q!</span>
+            <span class="quick-chip">systemctl get-default</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 3 ─────────────── -->
+      <section class="chapter" id="ch3">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 03</div>
+          <div>
+            <div class="chapter-title">Package Management</div>
+            <div class="chapter-summary">Managing software with <code style="font-family:Space Mono;font-size:13px;color:var(--accent4)">dnf</code> (repos) and <code style="font-family:Space Mono;font-size:13px;color:var(--accent4)">rpm</code> (.rpm files).</div>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card green">
+            <div class="card-label green">DNF Commands</div>
+            <div class="section-label" style="margin-top:0">Search & List</div>
+            <ul class="code-list">
+              <li><div class="cmd root">dnf search firefox</div></li>
+              <li><div class="cmd root">dnf list all</div></li>
+              <li><div class="cmd root">dnf list all | grep wget</div></li>
+              <li><div class="cmd root">dnf list installed</div></li>
+              <li><div class="cmd root">dnf list installed | grep wget</div></li>
+              <li><div class="cmd root">dnf list installed | grep -e wget -e firefox</div></li>
+            </ul>
+            <div class="section-label">Install / Remove</div>
+            <ul class="code-list">
+              <li><div class="cmd root">dnf install wget -y</div></li>
+              <li><div class="cmd root">dnf groupinstall "X Window System"</div></li>
+              <li><div class="cmd root">dnf localinstall file.rpm</div></li>
+              <li><div class="cmd root">dnf remove google-chrome</div></li>
+              <li><div class="cmd root">dnf update -y</div></li>
+            </ul>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">RPM Commands</div>
+            <ul class="code-list">
+              <li><div class="cmd root">rpm -qa</div><div class="cmd-note">list all installed</div></li>
+              <li><div class="cmd root">rpm -qa | grep google</div><div class="cmd-note">find a package</div></li>
+              <li><div class="cmd root">rpm -ivh file.rpm</div><div class="cmd-note">install .rpm file</div></li>
+              <li><div class="cmd root">rpm -Uvh file.rpm</div><div class="cmd-note">update .rpm file</div></li>
+              <li><div class="cmd root">rpm -e &lt;package&gt;</div><div class="cmd-note">erase / remove</div></li>
+            </ul>
+            <div class="section-label">RPM Flags</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">-i</span><span class="term-val">Install</span></div>
+              <div class="term-item"><span class="term-key">-U</span><span class="term-val">Update</span></div>
+              <div class="term-item"><span class="term-key">-v</span><span class="term-val">Verbose output</span></div>
+              <div class="term-item"><span class="term-key">-h</span><span class="term-val">Progress hash marks</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label red">DNF Lock Fix</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:12px">If <code style="font-family:Space Mono;color:var(--accent2)">dnf</code> is locked (pid file error):</p>
+          <ul class="code-list">
+            <li><div class="cmd root">rm -rf /var/run/dnf.pid</div></li>
+            <li><div class="cmd root">dnf clean all</div></li>
+          </ul>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label green">Remote RPM Install Example (Google Chrome)</div>
+          <ul class="code-list">
+            <li><div class="cmd">wget https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm</div></li>
+            <li><div class="cmd root">dnf localinstall google-chrome-stable_current_x86_64.rpm</div></li>
+          </ul>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">dnf search &lt;name&gt;</span>
+            <span class="quick-chip">dnf install -y</span>
+            <span class="quick-chip">dnf update -y</span>
+            <span class="quick-chip">dnf remove</span>
+            <span class="quick-chip">dnf list installed</span>
+            <span class="quick-chip">rpm -qa</span>
+            <span class="quick-chip">rpm -ivh</span>
+            <span class="quick-chip">rpm -Uvh</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 4 ─────────────── -->
+      <section class="chapter" id="ch4">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 04</div>
+          <div>
+            <div class="chapter-title">Files & Directories</div>
+            <div class="chapter-summary">Create, view, move, copy, delete files and directories. Master wildcards and find patterns.</div>
+          </div>
+        </div>
+
+        <div class="card-grid three">
+          <div class="card yellow">
+            <div class="card-label yellow">cat — Create / View</div>
+            <ul class="code-list">
+              <li><div class="cmd">cat &gt; test1</div><div class="cmd-note">create interactively (Ctrl+Z to save)</div></li>
+              <li><div class="cmd">cat test1</div><div class="cmd-note">view file</div></li>
+              <li><div class="cmd">cat &gt;&gt; test1</div><div class="cmd-note">append (Ctrl+Z to end)</div></li>
+            </ul>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">mv — Move / Rename</div>
+            <ul class="code-list">
+              <li><div class="cmd">mv test1 test01</div><div class="cmd-note">rename file</div></li>
+              <li><div class="cmd">mv test2 001/test2</div><div class="cmd-note">move file</div></li>
+              <li><div class="cmd">mv test2 001/test3</div><div class="cmd-note">move + rename</div></li>
+            </ul>
+          </div>
+
+          <div class="card red">
+            <div class="card-label red">rm — Delete <span class="warn">⚠ careful</span></div>
+            <ul class="code-list">
+              <li><div class="cmd">rm &lt;file&gt;</div><div class="cmd-note">prompts before delete</div></li>
+              <li><div class="cmd">rm -rf &lt;file&gt;</div><div class="cmd-note">no prompt, force</div></li>
+              <li><div class="cmd">rm -rf f1 f2 f3</div><div class="cmd-note">multiple files</div></li>
+              <li><div class="cmd" style="color:var(--accent2)">rm -rf *</div><div class="cmd-note" style="color:var(--accent2)">⚠ EVERYTHING in folder</div></li>
+              <li><div class="cmd">rm -rf test*</div><div class="cmd-note">starts with "test"</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card green">
+            <div class="card-label green">cp — Copy</div>
+            <ul class="code-list">
+              <li><div class="cmd">cp file1.txt file2.txt</div><div class="cmd-note">copy file</div></li>
+              <li><div class="cmd">cp -r apple/* test/</div><div class="cmd-note">copy all files from apple/ into test/</div></li>
+              <li><div class="cmd">cp -r apple/. test/</div><div class="cmd-note">includes hidden files (.env etc.)</div></li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">mkdir / rmdir</div>
+            <ul class="code-list">
+              <li><div class="cmd">mkdir test1</div></li>
+              <li><div class="cmd">mkdir t2 t3 t4</div><div class="cmd-note">multiple at once</div></li>
+              <li><div class="cmd">rmdir test1</div><div class="cmd-note">remove EMPTY dir only</div></li>
+              <li><div class="cmd">rm -rf test1</div><div class="cmd-note">remove non-empty dir</div></li>
+              <li><div class="cmd">rm -rf test*</div><div class="cmd-note">wildcard on dirs</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-label">Find Patterns</div>
+        <div class="card">
+          <div class="card-label blue">find</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <div class="sub-card" style="flex:1;min-width:160px">
+              <div class="sub-card-title">Exact match</div>
+              <div class="cmd">find test</div>
+            </div>
+            <div class="sub-card" style="flex:1;min-width:160px">
+              <div class="sub-card-title">Starts with</div>
+              <div class="cmd">find test*</div>
+            </div>
+            <div class="sub-card" style="flex:1;min-width:160px">
+              <div class="sub-card-title">Contains</div>
+              <div class="cmd">find *test*</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">mv old new</span>
+            <span class="quick-chip">cp a b</span>
+            <span class="quick-chip">cp -r dir1 dir2</span>
+            <span class="quick-chip">mkdir name</span>
+            <span class="quick-chip">rmdir (empty)</span>
+            <span class="quick-chip">rm -rf (careful!)</span>
+            <span class="quick-chip">find *keyword*</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 5 ─────────────── -->
+      <section class="chapter" id="ch5">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 05</div>
+          <div>
+            <div class="chapter-title">Users & Permissions</div>
+            <div class="chapter-summary">Manage user accounts, passwords, groups, and account security on CentOS.</div>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">Add / View Users</div>
+            <ul class="code-list">
+              <li><div class="cmd root">useradd username</div><div class="cmd-note">create user</div></li>
+              <li><div class="cmd root">passwd username</div><div class="cmd-note">assign password</div></li>
+              <li><div class="cmd">cat /etc/passwd</div><div class="cmd-note">all user info</div></li>
+              <li><div class="cmd">cut -d: -f1 /etc/passwd</div><div class="cmd-note">list usernames only (-f1 = first column)</div></li>
+            </ul>
+          </div>
+
+          <div class="card red">
+            <div class="card-label red">Delete User <span class="warn">⚠</span></div>
+            <ul class="code-list">
+              <li><div class="cmd root">userdel -r username</div><div class="cmd-note">delete user + home dir</div></li>
+              <li><div class="cmd root">userdel username</div><div class="cmd-note">delete user only</div></li>
+              <li><div class="cmd root">rm -f /home/username</div><div class="cmd-note">manually remove home dir</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-grid three" style="margin-top:16px">
+          <div class="card yellow">
+            <div class="card-label yellow">Password Options</div>
+            <ul class="code-list">
+              <li><div class="cmd root">useradd username</div></li>
+              <li><div class="cmd root">passwd -d username</div><div class="cmd-note">create user WITHOUT password</div></li>
+              <li><div class="cmd root">chage -d 0 username</div><div class="cmd-note">force password change at next login</div></li>
+            </ul>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">Lock / Unlock User</div>
+            <ul class="code-list">
+              <li><div class="cmd root">passwd -l username</div><div class="cmd-note">🔒 lock user</div></li>
+              <li><div class="cmd root">passwd -u username</div><div class="cmd-note">🔓 unlock user</div></li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">Rename User</div>
+            <ul class="code-list">
+              <li><div class="cmd root">usermod -l ra makara2</div><div class="cmd-note">rename makara2 → ra (home dir keeps old name)</div></li>
+              <li><div class="cmd root">usermod -d /home/ra -m ra</div><div class="cmd-note">also rename home dir</div></li>
+            </ul>
+            <div class="sub-card" style="margin-top:10px">
+              <div class="sub-card-title">Common issue: user process running</div>
+              <div class="cmd">ps -u bora -o pid,cmd</div>
+              <div class="cmd" style="margin-top:6px">kill 4363</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Group Management</div>
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">Groups — Create / View / Delete</div>
+            <ul class="code-list">
+              <li><div class="cmd root">groupadd IT01</div><div class="cmd-note">create group named IT01</div></li>
+              <li><div class="cmd root">cut -d: -f1 /etc/group</div><div class="cmd-note">list all group names</div></li>
+              <li><div class="cmd root">groups user1</div><div class="cmd-note">show groups of a user</div></li>
+              <li><div class="cmd root">lid -g group_name</div><div class="cmd-note">show all users in group</div></li>
+              <li><div class="cmd root">groupmod -n IT1 IT01</div><div class="cmd-note">rename group IT01 → IT1</div></li>
+              <li><div class="cmd root">groupdel IT1</div><div class="cmd-note">delete group</div></li>
+            </ul>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">Add User to Group</div>
+            <ul class="code-list">
+              <li><div class="cmd root">useradd -g IT1 HAO</div><div class="cmd-note">new user HAO → group IT1</div></li>
+              <li><div class="cmd root">usermod -a -G IT2 Test1</div><div class="cmd-note">existing user Test1 → add to IT2</div></li>
+            </ul>
+            <div class="section-label" style="margin-top:14px">Flag meanings</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">-g</span><span class="term-val">Set primary group (new user)</span></div>
+              <div class="term-item"><span class="term-key">-a -G</span><span class="term-val">Append to supplementary group (existing)</span></div>
+              <div class="term-item"><span class="term-key">-d</span><span class="term-val">Delimiter (e.g. in cut)</span></div>
+              <div class="term-item"><span class="term-key">-f</span><span class="term-val">Field/column (e.g. -f1 = first col)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">useradd username</span>
+            <span class="quick-chip">passwd username</span>
+            <span class="quick-chip">userdel -r username</span>
+            <span class="quick-chip">passwd -l / -u</span>
+            <span class="quick-chip">chage -d 0</span>
+            <span class="quick-chip">groupadd / groupdel</span>
+            <span class="quick-chip">usermod -a -G</span>
+            <span class="quick-chip">cat /etc/passwd</span>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- end .content -->
+  </main>
+</div>
+
+<script>
+  // Progress bar
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollTop / scrollHeight;
+    progressBar.style.transform = `scaleX(${progress})`;
+  });
+
+  // Intersection Observer for chapter reveal
+  const chapters = document.querySelectorAll('.chapter');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.05 });
+  chapters.forEach(c => observer.observe(c));
+
+  // Active nav highlight
+  const navItems = document.querySelectorAll('.nav-item');
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const id = e.target.id;
+        const active = document.querySelector(`.nav-item[href="#${id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('section[id]').forEach(s => sectionObserver.observe(s));
+
+  // Mobile sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+</script>
+</body>
+</html>
