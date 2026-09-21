@@ -652,6 +652,10 @@
   .chapter:nth-child(3) .chapter-num { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.2); color: var(--accent4); }
   .chapter:nth-child(4) .chapter-num { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.2); color: var(--yellow); }
   .chapter:nth-child(5) .chapter-num { background: rgba(255,107,107,0.08); border-color: rgba(255,107,107,0.2); color: var(--accent2); }
+  .chapter:nth-child(6) .chapter-num { background: rgba(0,229,255,0.08); border-color: rgba(0,229,255,0.2); color: var(--accent); }
+  .chapter:nth-child(7) .chapter-num { background: rgba(167,139,250,0.08); border-color: rgba(167,139,250,0.2); color: var(--accent3); }
+  .chapter:nth-child(8) .chapter-num { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.2); color: var(--accent4); }
+  .chapter:nth-child(9) .chapter-num { background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.2); color: var(--yellow); }
 
   /* group sub-cards */
   .sub-card {
@@ -733,10 +737,22 @@
       <a class="nav-item" href="#ch5">
         <span class="nav-num">05</span> Users & Permissions
       </a>
+      <a class="nav-item" href="#ch6">
+        <span class="nav-num">06</span> Compression & Crontab
+      </a>
+      <a class="nav-item" href="#ch7">
+        <span class="nav-num">07</span> Network Services
+      </a>
+      <a class="nav-item" href="#ch8">
+        <span class="nav-num">08</span> DNS Server
+      </a>
+      <a class="nav-item" href="#ch9">
+        <span class="nav-num">09</span> Web Server
+      </a>
     </nav>
 
     <div class="sidebar-footer">
-      5 chapters · ~60 commands<br>
+      9 chapters · ~150 commands<br>
       <span style="color:var(--accent)">●</span> Ready for review
     </div>
   </aside>
@@ -748,14 +764,14 @@
     <div class="hero">
       <div class="hero-tag">📋 Pre-Class Notes</div>
       <h1>CentOS Linux<br><span>Review Guide</span></h1>
-      <p class="hero-desc">Concise, organized notes covering core CentOS concepts — from basic navigation to user management and permissions.</p>
+      <p class="hero-desc">Concise, organized notes covering core CentOS concepts — from basic navigation and permissions to backups, networking, DNS, and web servers.</p>
       <div class="hero-stats">
         <div class="stat">
-          <div class="stat-num">5<span>ch</span></div>
+          <div class="stat-num">9<span>ch</span></div>
           <div class="stat-label">Chapters</div>
         </div>
         <div class="stat">
-          <div class="stat-num">60<span>+</span></div>
+          <div class="stat-num">150<span>+</span></div>
           <div class="stat-label">Commands</div>
         </div>
         <div class="stat">
@@ -881,13 +897,22 @@
           </div>
         </div>
 
-        <div class="card-grid">
+        <div class="card-grid three">
           <div class="card purple">
             <div class="card-label purple">Help Commands</div>
             <ul class="code-list">
               <li><div class="cmd">&lt;command&gt; --help</div></li>
               <li><div class="cmd">man &lt;command&gt;</div><div class="cmd-note">manual page</div></li>
               <li><div class="cmd">info &lt;command&gt;</div><div class="cmd-note">info page</div></li>
+            </ul>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">Touch — Create Files</div>
+            <ul class="code-list">
+              <li><div class="cmd">touch file_name</div><div class="cmd-note">create empty file</div></li>
+              <li><div class="cmd">touch f1 f2 f3</div><div class="cmd-note">create multiple</div></li>
+              <li><div class="cmd">touch .test</div><div class="cmd-note">create hidden file</div></li>
             </ul>
           </div>
 
@@ -956,6 +981,7 @@
             <span class="quick-chip">ls -lh</span>
             <span class="quick-chip">cd ~ / cd ..</span>
             <span class="quick-chip">vi :wq / :q!</span>
+            <span class="quick-chip">touch file</span>
             <span class="quick-chip">systemctl get-default</span>
           </div>
         </div>
@@ -1222,6 +1248,7 @@
             <ul class="code-list">
               <li><div class="cmd root">useradd -g IT1 HAO</div><div class="cmd-note">new user HAO → group IT1</div></li>
               <li><div class="cmd root">usermod -a -G IT2 Test1</div><div class="cmd-note">existing user Test1 → add to IT2</div></li>
+              <li><div class="cmd root">gpasswd -M user1,user2 groupname</div><div class="cmd-note">add multiple users at once</div></li>
             </ul>
             <div class="section-label" style="margin-top:14px">Flag meanings</div>
             <div class="term-list">
@@ -1231,6 +1258,53 @@
               <div class="term-item"><span class="term-key">-f</span><span class="term-val">Field/column (e.g. -f1 = first col)</span></div>
             </div>
           </div>
+        </div>
+
+        <div class="section-label">Ownership & Permissions</div>
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">Change Ownership</div>
+            <ul class="code-list">
+              <li><div class="cmd root">chown user1 filename</div><div class="cmd-note">change owner</div></li>
+              <li><div class="cmd root">chgrp IT01 filename</div><div class="cmd-note">change group</div></li>
+            </ul>
+            <div style="margin-top:16px">
+              <div class="section-label" style="margin-top:0">Permission Keywords</div>
+              <div class="term-list">
+                <div class="term-item"><span class="term-key">u / g / o / a</span><span class="term-val">owner / group / other / all</span></div>
+                <div class="term-item"><span class="term-key">= + -</span><span class="term-val">set / add / remove</span></div>
+              </div>
+              <div class="cmd" style="margin-top:10px">chmod u=rw,g=r,o=r file</div>
+              <div class="cmd-note" style="margin-bottom:6px">set exact permissions</div>
+              <div class="cmd">chmod a+x file1</div>
+              <div class="cmd-note">add execute for everyone</div>
+            </div>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">chmod — Permission Numbers</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">0</span><span class="term-val">None</span></div>
+              <div class="term-item"><span class="term-key">1</span><span class="term-val">Execute</span></div>
+              <div class="term-item"><span class="term-key">2</span><span class="term-val">Write</span></div>
+              <div class="term-item"><span class="term-key">3</span><span class="term-val">Write + Execute</span></div>
+              <div class="term-item"><span class="term-key">4</span><span class="term-val">Read</span></div>
+              <div class="term-item"><span class="term-key">5</span><span class="term-val">Read + Execute</span></div>
+              <div class="term-item"><span class="term-key">6</span><span class="term-val">Read + Write</span></div>
+              <div class="term-item"><span class="term-key">7</span><span class="term-val">Read + Write + Execute</span></div>
+            </div>
+            <div style="margin-top:14px">
+              <div class="cmd root">chmod -R 770 dirname</div>
+              <div class="cmd-note">-R = apply to subdirectories too (owner+group full, others none)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label yellow">Allow a User to Use sudo</div>
+          <ul class="code-list">
+            <li><div class="cmd root">vi /etc/sudoers</div><div class="cmd-note">find the line that lets root run any command anywhere, add your user below it the same way</div></li>
+          </ul>
         </div>
 
         <div class="quick-review">
@@ -1244,6 +1318,655 @@
             <span class="quick-chip">groupadd / groupdel</span>
             <span class="quick-chip">usermod -a -G</span>
             <span class="quick-chip">cat /etc/passwd</span>
+            <span class="quick-chip">chown / chgrp</span>
+            <span class="quick-chip">chmod -R 770</span>
+            <span class="quick-chip">chmod a+x</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 6 ─────────────── -->
+      <section class="chapter" id="ch6">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 06</div>
+          <div>
+            <div class="chapter-title">Compressions and Crontab</div>
+            <div class="chapter-summary">Compress files with <code style="font-family:Space Mono;font-size:13px;color:var(--accent4)">zip</code> and <code style="font-family:Space Mono;font-size:13px;color:var(--accent4)">tar</code>, then automate backups with <code style="font-family:Space Mono;font-size:13px;color:var(--accent4)">crontab</code>.</div>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">Zip & Unzip</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Compresses files/directories while keeping the originals. Saves in MS-DOS format.</p>
+            <div class="section-label" style="margin-top:0">Install</div>
+            <ul class="code-list">
+              <li><div class="cmd root">dnf install zip unzip</div></li>
+            </ul>
+            <div class="section-label">Usage</div>
+            <ul class="code-list">
+              <li><div class="cmd">zip -r backup.zip folder1 folder2</div><div class="cmd-note">compress</div></li>
+              <li><div class="cmd">unzip backup.zip</div><div class="cmd-note">extract</div></li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">Tar (Tape Archive)</div>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Stores data in UNIX format (preserves uid, gid, permissions) — unlike zip.</p>
+            <div class="section-label" style="margin-top:0">Key Flags</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">z</span><span class="term-val">Compress / decompress</span></div>
+              <div class="term-item"><span class="term-key">c</span><span class="term-val">Create archive</span></div>
+              <div class="term-item"><span class="term-key">x</span><span class="term-val">Extract archive</span></div>
+              <div class="term-item"><span class="term-key">v</span><span class="term-val">Verbose output</span></div>
+              <div class="term-item"><span class="term-key">f</span><span class="term-val">Specify filename</span></div>
+            </div>
+            <div class="section-label">Usage</div>
+            <ul class="code-list">
+              <li><div class="cmd">tar -zcvf backup.tar folder1 folder2</div><div class="cmd-note">compress</div></li>
+              <li><div class="cmd">tar -zxvf backup.tar</div><div class="cmd-note">extract</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-label">Backup with Date & Time</div>
+        <div class="card">
+          <div class="card-label yellow">Append a Timestamp to Backup Filenames</div>
+          <ul class="code-list">
+            <li><div class="cmd">tar -zcvf "backup$(date +%F_%T).tar" data</div><div class="cmd-note">result: backup2020-12-31_21:39:41.tar</div></li>
+            <li><div class="cmd">tar -zcvf "backup$(date +%y%m%d%H%M%S).tar" data</div><div class="cmd-note">result: backup201231213941.tar</div></li>
+          </ul>
+          <div class="section-label">Date Format Codes</div>
+          <div class="term-list">
+            <div class="term-item"><span class="term-key">%F</span><span class="term-val">Full date (YYYY-MM-DD)</span></div>
+            <div class="term-item"><span class="term-key">%T</span><span class="term-val">Full time (HH:MM:SS)</span></div>
+            <div class="term-item"><span class="term-key">%y%m%d</span><span class="term-val">Year / Month / Day</span></div>
+            <div class="term-item"><span class="term-key">%H%M%S</span><span class="term-val">Hour / Minute / Second</span></div>
+          </div>
+        </div>
+
+        <div class="section-label">Crontab — Scheduled Tasks</div>
+        <div class="card-grid">
+          <div class="card green">
+            <div class="card-label green">Manage the Cron Service</div>
+            <ul class="code-list">
+              <li><div class="cmd root">service crond status</div></li>
+              <li><div class="cmd root">service crond start</div></li>
+              <li><div class="cmd root">service crond stop</div></li>
+              <li><div class="cmd root">service crond restart</div></li>
+            </ul>
+            <div class="cmd-note" style="margin-top:6px">Syntax: <span style="color:var(--accent4)">Mi Ho Dm Mo Dw &lt;Command&gt;</span></div>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">Field Ranges</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">Mi</span><span class="term-val">Minutes — 0–59</span></div>
+              <div class="term-item"><span class="term-key">Ho</span><span class="term-val">Hours — 0–23</span></div>
+              <div class="term-item"><span class="term-key">Dm</span><span class="term-val">Day of month — 1–31</span></div>
+              <div class="term-item"><span class="term-key">Mo</span><span class="term-val">Month — 1–12 or Jan–Dec</span></div>
+              <div class="term-item"><span class="term-key">Dw</span><span class="term-val">Day of week — 0–6 or Mon–Sun</span></div>
+            </div>
+            <div class="cmd-note" style="margin-top:8px">Some commands (tar, shutdown, reboot) need their full path — use <span style="color:var(--accent4)">which &lt;command&gt;</span> to find it.</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label purple">Crontab Examples</div>
+          <ul class="code-list">
+            <li><div class="cmd">10 20 * * *</div><div class="cmd-note">at 8:10 PM daily</div></li>
+            <li><div class="cmd">*/5 * * * *</div><div class="cmd-note">every 5 minutes</div></li>
+            <li><div class="cmd">* */12 * * *</div><div class="cmd-note">every 12 hours</div></li>
+            <li><div class="cmd">32 18 17,21,29 11 *</div><div class="cmd-note">at 6:32 PM on Nov 17, 21, 29</div></li>
+            <li><div class="cmd">0 18 * * mon-fri</div><div class="cmd-note">at 6 PM, Monday–Friday</div></li>
+            <li><div class="cmd">0 18-20 * * mon-fri</div><div class="cmd-note">at 6, 7 & 8 PM, Monday–Friday</div></li>
+          </ul>
+        </div>
+
+        <div class="section-label">Crontab + Shell Script</div>
+        <div class="card-grid">
+          <div class="card yellow">
+            <div class="card-label yellow">Recommended Script Locations</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">/usr/local/bin/</span><span class="term-val">normal users</span></div>
+              <div class="term-item"><span class="term-key">/usr/local/sbin/</span><span class="term-val">root</span></div>
+            </div>
+            <div class="section-label">Setup Steps</div>
+            <ul class="code-list">
+              <li><div class="cmd">touch /usr/local/sbin/backup.sh</div><div class="cmd-note">create script</div></li>
+              <li><div class="cmd">chmod +x backup.sh</div><div class="cmd-note">make executable</div></li>
+              <li><div class="cmd">crontab -e</div><div class="cmd-note">edit schedule</div></li>
+              <li><div class="cmd">crontab -l</div><div class="cmd-note">list schedules</div></li>
+            </ul>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">Full Example: Automated Backup</div>
+            <div class="sub-card">
+              <div class="sub-card-title">/backup.sh</div>
+              <div class="cmd">/usr/bin/tar -zcvf "/backup$(date).tar" data</div>
+            </div>
+            <div class="sub-card">
+              <div class="sub-card-title">Crontab entry</div>
+              <div class="cmd">0 18 * * * /backup.sh</div>
+            </div>
+            <div class="cmd-note" style="margin-top:8px">Every day at 6 PM, the system runs <span style="color:var(--accent4)">backup.sh</span>, which uses <span style="color:var(--accent4)">tar</span> to create a timestamped backup.</div>
+          </div>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">zip -r / unzip</span>
+            <span class="quick-chip">tar -zcvf / -zxvf</span>
+            <span class="quick-chip">tar flags: zcvf / zxvf</span>
+            <span class="quick-chip">date +%F_%T</span>
+            <span class="quick-chip">crontab -e / -l</span>
+            <span class="quick-chip">Mi Ho Dm Mo Dw</span>
+            <span class="quick-chip">*/5 * * * *</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 7 ─────────────── -->
+      <section class="chapter" id="ch7">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 07</div>
+          <div>
+            <div class="chapter-title">Network Services</div>
+            <div class="chapter-summary">Hostname, IP addressing, interface control, and connectivity testing on CentOS.</div>
+          </div>
+        </div>
+
+        <div class="card-grid single">
+          <div class="card blue">
+            <div class="card-label blue">Common Network Services</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">Telnet / SSH</span><span class="term-val">Remote access — remotely manage servers</span></div>
+              <div class="term-item"><span class="term-key">DHCP</span><span class="term-val">Auto IP assignment to clients</span></div>
+              <div class="term-item"><span class="term-key">SAMBA</span><span class="term-val">File sharing (Windows ↔ Linux)</span></div>
+              <div class="term-item"><span class="term-key">NFS</span><span class="term-val">Network File System sharing</span></div>
+              <div class="term-item"><span class="term-key">DNS</span><span class="term-val">Resolves domain names to IPs</span></div>
+              <div class="term-item"><span class="term-key">Web Server</span><span class="term-val">Hosts and runs web services</span></div>
+              <div class="term-item"><span class="term-key">Database</span><span class="term-val">Stores and serves data</span></div>
+              <div class="term-item"><span class="term-key">FTP</span><span class="term-val">File transfer between systems</span></div>
+              <div class="term-item"><span class="term-key">Mail Server</span><span class="term-val">Handles email services</span></div>
+              <div class="term-item"><span class="term-key">Cloud</span><span class="term-val">Remote infrastructure & services</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Hostname</div>
+        <div class="card-grid">
+          <div class="card purple">
+            <div class="card-label purple">Display Hostname</div>
+            <ul class="code-list">
+              <li><div class="cmd">hostname</div><div class="cmd-note">simple — shows short name</div></li>
+              <li><div class="cmd">hostnamectl</div><div class="cmd-note">detailed system info (OS, kernel, virtualization)</div></li>
+            </ul>
+          </div>
+          <div class="card green">
+            <div class="card-label green">Change Hostname</div>
+            <ul class="code-list">
+              <li><div class="cmd">hostname SERVER1</div><div class="cmd-note">temporary <span class="warn">⚠ resets on reboot</span></div></li>
+              <li><div class="cmd">vi /etc/hostname</div><div class="cmd-note">permanent — edit and save the name, persists after reboot</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-label">IP Address</div>
+        <div class="card-grid">
+          <div class="card yellow">
+            <div class="card-label yellow">Display IP Address</div>
+            <ul class="code-list">
+              <li><div class="cmd">ifconfig</div><div class="cmd-note">show active interfaces</div></li>
+              <li><div class="cmd">ifconfig -a</div><div class="cmd-note">show ALL interfaces (incl. inactive)</div></li>
+              <li><div class="cmd">ifconfig eth0</div><div class="cmd-note">show one interface</div></li>
+            </ul>
+            <div class="section-label">Modern Alternatives</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">ip addr / ip a</span><span class="term-val">all IP addresses on the system</span></div>
+              <div class="term-item"><span class="term-key">ip link / ip l</span><span class="term-val">Layer 2 info — MAC, UP/DOWN (no IP)</span></div>
+              <div class="term-item"><span class="term-key">ip -s link</span><span class="term-val">packet stats — errors, dropped, for troubleshooting</span></div>
+            </div>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">If ifconfig Is Missing</div>
+            <ul class="code-list">
+              <li><div class="cmd">ping google.com -c 4</div><div class="cmd-note">1. check internet connection</div></li>
+              <li><div class="cmd root">dnf provides ifconfig</div><div class="cmd-note">2. find the package that provides it</div></li>
+              <li><div class="cmd root">dnf install net-tools -y</div><div class="cmd-note">3. install net-tools</div></li>
+              <li><div class="cmd">ifconfig -a</div><div class="cmd-note">4. test it works</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card-grid three">
+          <div class="card red">
+            <div class="card-label red">Assign IP Temporarily</div>
+            <div class="cmd-note" style="margin-bottom:8px">⚠ resets after reboot</div>
+            <div class="cmd">ifconfig eth0 192.168.1.1 netmask 255.255.255.0 up</div>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">Assign IP Permanently (Static)</div>
+            <div class="cmd-note" style="margin-bottom:8px">✅ persists after reboot</div>
+            <div class="cmd" style="font-size:11px">vi /etc/NetworkManager/system-connections/enp0s3.nmconnection</div>
+            <div class="sub-card">
+              <div class="sub-card-title">Add configuration</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11.5px;color:var(--accent4);line-height:1.8">
+                DEVICE=eth0<br>IPADDR=192.168.1.1<br>NETMASK=255.255.255.0<br>BOOTPROTO=static<br>ONBOOT=yes
+              </div>
+            </div>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">Assign DHCP IP</div>
+            <div class="cmd-note" style="margin-bottom:8px">IP auto-assigned by DHCP server</div>
+            <div class="cmd" style="font-size:11px">vi /etc/sysconfig/network-scripts/ifcfg-eth0</div>
+            <div class="sub-card">
+              <div class="sub-card-title">Add configuration</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11.5px;color:var(--accent4);line-height:1.8">
+                DEVICE=eth0<br>BOOTPROTO=dhcp<br>HWADDR=08:00:27:00:72:ef<br>TYPE=Ethernet<br>ONBOOT=yes
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-label">Interface & Service Control</div>
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">Start / Stop Interface</div>
+            <ul class="code-list">
+              <li><div class="cmd root">ifdown eth0</div><div class="cmd-note">disable (bring down)</div></li>
+              <li><div class="cmd root">ifup eth0</div><div class="cmd-note">enable (bring up)</div></li>
+            </ul>
+          </div>
+          <div class="card yellow">
+            <div class="card-label yellow">Start / Stop Network Service</div>
+            <ul class="code-list">
+              <li><div class="cmd root">systemctl start NetworkManager</div></li>
+              <li><div class="cmd root">systemctl stop NetworkManager</div></li>
+              <li><div class="cmd root">systemctl restart NetworkManager</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label green">Ping Another IP Address</div>
+          <ul class="code-list">
+            <li><div class="cmd">ping 192.168.1.2 -c 4</div><div class="cmd-note">sends 4 ping requests to that IP</div></li>
+          </ul>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">hostname / hostnamectl</span>
+            <span class="quick-chip">vi /etc/hostname</span>
+            <span class="quick-chip">ifconfig -a</span>
+            <span class="quick-chip">ip addr</span>
+            <span class="quick-chip">ifconfig eth0 ... up</span>
+            <span class="quick-chip">ifdown / ifup</span>
+            <span class="quick-chip">ping -c 4</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 8 ─────────────── -->
+      <section class="chapter" id="ch8">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 08</div>
+          <div>
+            <div class="chapter-title">DNS Server</div>
+            <div class="chapter-summary">Name resolution with BIND: zones, record types, FQDN, and a full CentOS DNS server setup.</div>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">What Is DNS?</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px">DNS (Domain Name System) converts a human-readable hostname (e.g. <code style="font-family:Space Mono;font-size:11px;color:var(--accent)">www.makara.com</code>) into an IP address (e.g. <code style="font-family:Space Mono;font-size:11px;color:var(--accent)">200.200.200.1</code>).</p>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">Name Server</span><span class="term-val">the DNS server — stores and manages records</span></div>
+              <div class="term-item"><span class="term-key">Resolver</span><span class="term-val">the DNS client — queries the server, passes IP to the browser</span></div>
+            </div>
+            <div class="cmd-note" style="margin-top:10px">Each DNS client must be manually registered by an administrator (static record).</div>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">Name Resolution Process</div>
+            <ul class="bullet-list">
+              <li>DNS client (resolver) needs an IP for a hostname</li>
+              <li>It sends a query to its DNS server</li>
+              <li>The DNS server looks up the record and responds with the IP</li>
+              <li>The resolver passes the IP to the web browser</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-label">Zones & Record Types</div>
+        <div class="card-grid">
+          <div class="card green">
+            <div class="card-label green">Zones</div>
+            <p style="font-size:12.5px;color:var(--muted);margin-bottom:10px">DNS databases are organized into zones — the zone name matches the domain name.</p>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">Forward Lookup</span><span class="term-val">Name → IP · stores A (Host) records</span></div>
+              <div class="term-item"><span class="term-key">Reverse Lookup</span><span class="term-val">IP → Name · stores PTR records</span></div>
+            </div>
+          </div>
+
+          <div class="card yellow">
+            <div class="card-label yellow">Record Types</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">A (Host)</span><span class="term-val">Hostname → IP — <code style="font-family:Space Mono;font-size:11px;color:var(--accent4)">WSERVER1 IN A 192.168.1.1</code></span></div>
+              <div class="term-item"><span class="term-key">PTR</span><span class="term-val">IP → Hostname — <code style="font-family:Space Mono;font-size:11px;color:var(--accent4)">1 IN PTR ns1.centos.kh.</code></span></div>
+              <div class="term-item"><span class="term-key">CNAME</span><span class="term-val">Alias — <code style="font-family:Space Mono;font-size:11px;color:var(--accent4)">www IN CNAME WSERVER1</code></span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label blue">FQDN — Fully Qualified Domain Name</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:10px">An FQDN combines a Host Name and a Domain Name, e.g. <code style="font-family:Space Mono;font-size:12px;color:var(--accent)">www.makara.com</code> = host <code style="font-family:Space Mono;font-size:12px;color:var(--accent3)">www</code> + domain <code style="font-family:Space Mono;font-size:12px;color:var(--accent3)">makara.com</code>.</p>
+          <div class="term-list">
+            <div class="term-item"><span class="term-key">Root</span><span class="term-val">top-level DNS server</span></div>
+            <div class="term-item"><span class="term-key">Top Level</span><span class="term-val">servers registered with Root (e.g. .com, .kh)</span></div>
+            <div class="term-item"><span class="term-key">Second Level</span><span class="term-val">servers registered under Top Level (e.g. makara.com)</span></div>
+          </div>
+        </div>
+
+        <div class="section-label">BIND Configuration (CentOS)</div>
+
+        <div class="card-grid">
+          <div class="card red">
+            <div class="card-label red">Step 1 — Hostname & IP</div>
+            <ul class="code-list">
+              <li><div class="cmd root">vi /etc/sysconfig/network</div><div class="cmd-note">NETWORKING=yes, GATEWAY, HOSTNAME=centos.kh</div></li>
+              <li><div class="cmd root">vi /etc/hosts</div><div class="cmd-note">192.168.100.1  ns1.centos.kh  ns1</div></li>
+            </ul>
+            <div class="term-list" style="margin-top:10px">
+              <div class="term-item"><span class="term-key">DNS Server</span><span class="term-val">192.168.100.1 — centos.kh</span></div>
+              <div class="term-item"><span class="term-key">CentOS Client</span><span class="term-val">192.168.100.2 — client1.centos</span></div>
+              <div class="term-item"><span class="term-key">Windows Client</span><span class="term-val">192.168.100.3</span></div>
+            </div>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">Step 2 — Install & Configure BIND</div>
+            <ul class="code-list">
+              <li><div class="cmd root">dnf install bind bind-utils -y</div></li>
+              <li><div class="cmd root">vi /etc/named.conf</div><div class="cmd-note">edit options{} below</div></li>
+            </ul>
+            <div class="sub-card">
+              <div class="sub-card-title">Inside options { }</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent4);line-height:1.8">
+                listen-on port 53 { 127.0.0.1; 192.168.100.1; };<br>
+                allow-query { localhost; 192.168.100.0/24; };<br>
+                <span style="color:var(--muted)">// comment out listen-on-v6</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label purple">Step 3 — Zone Registration <span class="tag">named.conf</span></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <div class="sub-card" style="flex:1;min-width:260px">
+              <div class="sub-card-title">Forward Lookup Zone</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent4);line-height:1.8">
+                zone "centos.kh" IN {<br>
+                &nbsp;&nbsp;type master;<br>
+                &nbsp;&nbsp;file "/var/named/centos.kh.db";<br>
+                &nbsp;&nbsp;allow-update { none; };<br>
+                };
+              </div>
+            </div>
+            <div class="sub-card" style="flex:1;min-width:260px">
+              <div class="sub-card-title">Reverse Lookup Zone</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent4);line-height:1.8">
+                zone "100.168.192.in-addr.arpa" IN {<br>
+                &nbsp;&nbsp;type master;<br>
+                &nbsp;&nbsp;file "/var/named/192.168.100.db";<br>
+                &nbsp;&nbsp;allow-update { none; };<br>
+                };
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label yellow">Step 4 — Create Zone Files</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <div class="sub-card" style="flex:1;min-width:260px">
+              <div class="sub-card-title">/var/named/centos.kh.db (Forward)</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10.5px;color:var(--accent4);line-height:1.75">
+                @ IN SOA ns1.centos.kh. root.centos.kh. (<br>
+                &nbsp;&nbsp;1001 ;Serial &nbsp; 3H ;Refresh &nbsp; 15M ;Retry<br>
+                &nbsp;&nbsp;1W ;Expire &nbsp; 1D ;Minimum TTL )<br>
+                @ &nbsp;IN NS &nbsp;ns1.centos.kh.<br>
+                ns1 IN A &nbsp;192.168.100.1
+              </div>
+            </div>
+            <div class="sub-card" style="flex:1;min-width:260px">
+              <div class="sub-card-title">/var/named/192.168.100.db (Reverse)</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10.5px;color:var(--accent4);line-height:1.75">
+                @ IN SOA ns1.centos.kh. root.centos.kh. (<br>
+                &nbsp;&nbsp;1001 ;Serial &nbsp; 3H ;Refresh &nbsp; 15M ;Retry<br>
+                &nbsp;&nbsp;1W ;Expire &nbsp; 1D ;Minimum TTL )<br>
+                @ &nbsp;IN NS &nbsp;ns1.centos.kh.<br>
+                1 &nbsp;&nbsp;IN PTR ns1.centos.kh.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-grid" style="margin-top:16px">
+          <div class="card blue">
+            <div class="card-label blue">Step 5 — Restart & Firewall</div>
+            <ul class="code-list">
+              <li><div class="cmd root">systemctl restart named</div></li>
+              <li><div class="cmd root">systemctl enable named</div></li>
+              <li><div class="cmd root">firewall-cmd --permanent --add-port=53/udp</div></li>
+              <li><div class="cmd root">firewall-cmd --reload</div></li>
+            </ul>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">Step 6 & 7 — Test</div>
+            <div class="cmd-note" style="margin-bottom:6px">On the CentOS client, set DNS to 192.168.100.1 in /etc/resolv.conf</div>
+            <ul class="code-list">
+              <li><div class="cmd">dig ns1.centos.kh</div><div class="cmd-note">verify forward lookup</div></li>
+              <li><div class="cmd">dig -x 192.168.100.1</div><div class="cmd-note">verify reverse lookup</div></li>
+              <li><div class="cmd">ping ns1.centos.kh</div></li>
+            </ul>
+            <div class="cmd-note" style="margin-top:6px">On Windows: set DNS server to 192.168.100.1, then ping the IP and hostname.</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label red">Create Records</div>
+          <ul class="code-list">
+            <li><div class="cmd root">vi /var/named/centos.kh.db</div><div class="cmd-note">add A record: www IN A 192.168.100.1</div></li>
+            <li><div class="cmd root">vi /var/named/centos.kh.db</div><div class="cmd-note">add CNAME: test IN CNAME www.centos.kh.</div></li>
+            <li><div class="cmd root">systemctl restart named</div><div class="cmd-note">apply changes</div></li>
+          </ul>
+          <div class="section-label">Test All Records</div>
+          <ul class="code-list">
+            <li><div class="cmd">ping 192.168.100.1</div></li>
+            <li><div class="cmd">ping ns1.centos.kh</div></li>
+            <li><div class="cmd">ping www.centos.kh</div></li>
+            <li><div class="cmd">ping test.centos.kh</div></li>
+          </ul>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">Name Server vs Resolver</span>
+            <span class="quick-chip">Forward = Name→IP (A)</span>
+            <span class="quick-chip">Reverse = IP→Name (PTR)</span>
+            <span class="quick-chip">CNAME = alias</span>
+            <span class="quick-chip">dnf install bind bind-utils</span>
+            <span class="quick-chip">/etc/named.conf</span>
+            <span class="quick-chip">dig / dig -x</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── CHAPTER 9 ─────────────── -->
+      <section class="chapter" id="ch9">
+        <div class="chapter-header">
+          <div class="chapter-num">CH 09</div>
+          <div>
+            <div class="chapter-title">Web Server</div>
+            <div class="chapter-summary">Install and configure Apache HTTP Server on CentOS, then secure it with SSL.</div>
+          </div>
+        </div>
+
+        <div class="card-grid">
+          <div class="card blue">
+            <div class="card-label blue">What Is a Web Server?</div>
+            <p style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:10px">An Internet service used to host websites.</p>
+            <ul class="bullet-list">
+              <li>Stores website files and web pages</li>
+              <li>Displays information to users through a browser</li>
+              <li>Provides downloadable files or data to clients</li>
+              <li>Supports website administration & maintenance</li>
+            </ul>
+          </div>
+
+          <div class="card purple">
+            <div class="card-label purple">How a Client Accesses a Website</div>
+            <ul class="bullet-list">
+              <li>Client enters a website address in a browser</li>
+              <li>DNS resolves the address of the web server</li>
+              <li>The client connects to the web server</li>
+              <li>The web server sends the requested page back to the browser</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="section-label">Setup Roadmap</div>
+        <div class="card">
+          <div class="card-label green">6 Steps to a Running Web Server</div>
+          <div class="quick-grid">
+            <span class="quick-chip">1. Set up IP addresses</span>
+            <span class="quick-chip">2. Install Apache</span>
+            <span class="quick-chip">3. Allow firewall ports</span>
+            <span class="quick-chip">4. Create a web page</span>
+            <span class="quick-chip">5. Start & enable service</span>
+            <span class="quick-chip">6. Test in browser</span>
+          </div>
+        </div>
+
+        <div class="section-label">Network & Install</div>
+        <div class="card-grid">
+          <div class="card yellow">
+            <div class="card-label yellow">Network Setup</div>
+            <div class="term-list">
+              <div class="term-item"><span class="term-key">Server OS</span><span class="term-val">CentOS Server</span></div>
+              <div class="term-item"><span class="term-key">Server IP</span><span class="term-val">192.168.1.5/24</span></div>
+              <div class="term-item"><span class="term-key">Hostname</span><span class="term-val">centos.kh</span></div>
+              <div class="term-item"><span class="term-key">Client</span><span class="term-val">client1.centos — same network</span></div>
+            </div>
+            <ul class="code-list" style="margin-top:10px">
+              <li><div class="cmd root">vi /etc/hostname</div><div class="cmd-note">set hostname</div></li>
+              <li><div class="cmd">ping 192.168.1.5</div><div class="cmd-note">test connection</div></li>
+            </ul>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">Install Apache & Disable SELinux</div>
+            <ul class="code-list">
+              <li><div class="cmd root">dnf install httpd -y</div></li>
+              <li><div class="cmd root">vi /etc/selinux/config</div><div class="cmd-note">set SELINUX=disabled</div></li>
+            </ul>
+            <div class="cmd-note" style="margin-top:8px"><span class="warn">⚠ security</span> disabling SELinux lowers security — in production, configure it properly instead.</div>
+          </div>
+        </div>
+
+        <div class="section-label">Firewall & Test Page</div>
+        <div class="card-grid">
+          <div class="card red">
+            <div class="card-label red">Configure Firewall</div>
+            <ul class="code-list">
+              <li><div class="cmd root">firewall-cmd --permanent --add-port=80/tcp</div><div class="cmd-note">allow HTTP</div></li>
+              <li><div class="cmd root">firewall-cmd --permanent --add-port=443/tcp</div><div class="cmd-note">allow HTTPS</div></li>
+              <li><div class="cmd root">firewall-cmd --reload</div></li>
+            </ul>
+          </div>
+
+          <div class="card green">
+            <div class="card-label green">Create Test Page & Start Service</div>
+            <div class="cmd-note" style="margin-bottom:6px">Create <code style="font-family:Space Mono;color:var(--accent4)">/var/www/html/index.php</code> with:</div>
+            <div class="cmd">&lt;h1&gt;Hello World&lt;/h1&gt;</div>
+            <ul class="code-list" style="margin-top:10px">
+              <li><div class="cmd root">systemctl start httpd</div></li>
+              <li><div class="cmd root">systemctl enable httpd</div><div class="cmd-note">auto-start on boot</div></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label purple">Test Apache</div>
+          <div class="cmd-note" style="margin-bottom:8px">On the client PC, open a browser and go to:</div>
+          <div class="cmd">http://192.168.1.5</div>
+          <div class="cmd-note" style="margin-top:6px">Expected: the test page loads — Apache is running correctly.</div>
+        </div>
+
+        <div class="section-label">Secure Apache with SSL</div>
+        <div class="card-grid">
+          <div class="card yellow">
+            <div class="card-label yellow">Install & Generate Certificate</div>
+            <ul class="code-list">
+              <li><div class="cmd root">dnf install mod_ssl openssl</div></li>
+              <li><div class="cmd root">openssl genrsa -out ca.key 2048</div><div class="cmd-note">private key</div></li>
+              <li><div class="cmd root">openssl req -new -key ca.key -out ca.crt</div><div class="cmd-note">certificate request</div></li>
+              <li><div class="cmd root">openssl x509 -req -days 365 -in ca.crt -signkey ca.key</div><div class="cmd-note">generate certificate</div></li>
+            </ul>
+          </div>
+
+          <div class="card blue">
+            <div class="card-label blue">Copy Files & Configure SSL</div>
+            <ul class="code-list">
+              <li><div class="cmd root">cp ca.crt /etc/pki/tls/certs/</div></li>
+              <li><div class="cmd root">cp ca.key /etc/pki/tls/private/</div></li>
+              <li><div class="cmd root">vi /etc/httpd/conf.d/ssl.conf</div><div class="cmd-note">inside &lt;VirtualHost _default_:443&gt;</div></li>
+            </ul>
+            <div class="sub-card">
+              <div class="sub-card-title">Update these lines</div>
+              <div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent4);line-height:1.85">
+                DocumentRoot "/var/www/html"<br>
+                ServerName 192.168.1.5:443<br>
+                SSLCertificateFile /etc/pki/tls/certs/ca.crt<br>
+                SSLCertificateKeyFile /etc/pki/tls/private/ca.key
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px">
+          <div class="card-label green">Restart & Test HTTPS</div>
+          <ul class="code-list">
+            <li><div class="cmd root">systemctl restart httpd</div></li>
+          </ul>
+          <div class="cmd-note" style="margin:8px 0">On the client PC, open a browser and go to:</div>
+          <div class="cmd">https://192.168.1.5</div>
+          <div class="cmd-note" style="margin-top:6px">The site loads over HTTPS. The browser may warn about the certificate since it's self-signed.</div>
+        </div>
+
+        <div class="quick-review">
+          <div class="quick-title">Quick Review</div>
+          <div class="quick-grid">
+            <span class="quick-chip">dnf install httpd -y</span>
+            <span class="quick-chip">firewall-cmd --add-port=80/tcp</span>
+            <span class="quick-chip">/var/www/html/</span>
+            <span class="quick-chip">systemctl enable httpd</span>
+            <span class="quick-chip">dnf install mod_ssl openssl</span>
+            <span class="quick-chip">/etc/httpd/conf.d/ssl.conf</span>
+            <span class="quick-chip">https://server-ip</span>
           </div>
         </div>
       </section>
